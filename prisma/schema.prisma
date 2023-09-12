@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  username     String
+  email        String        @unique
+  password     String?
+  photo        String?
+  photoName    String?
+  refreshToken String?
+  confirmed    Boolean       @default(false)
+  role         Role          @default(USER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  singer       Singer?
+  singerAlbums SingerAlbum[]
+  songs        Song[]
+  playlists    Playlist[]
+}
+
+model Singer {
+  id           String        @id @default(uuid())
+  name         String
+  info         String
+  type         SingerType
+  photoName    String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String        @unique
+  singerAlbums SingerAlbum[]
+}
+
+model SingerAlbum {
+  id        String   @id @default(uuid())
+  name      String
+  photoName String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  Singer    Singer?  @relation(fields: [singerId], references: [id])
+  singerId  String?
+  songs     Song[]
+}
+
+model Song {
+  id            String             @id @default(uuid())
+  name          String
+  description   String
+  artist        String
+  type          SongType
+  language      String
+  rate          Int
+  photoName     String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  User          User?              @relation(fields: [userId], references: [id])
+  userId        String?
+  SingerAlbum   SingerAlbum?       @relation(fields: [singerAlbumId], references: [id])
+  singerAlbumId String?
+  playlists     SongsOnPlaylists[]
+}
+
+model Playlist {
+  id        String             @id @default(uuid())
+  name      String
+  photoName String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  User      User?              @relation(fields: [userId], references: [id])
+  userId    String?
+  songs     SongsOnPlaylists[]
+}
+
+model SongsOnPlaylists {
+  Song       Song     @relation(fields: [songId], references: [id])
+  songId     String
+  Playlist   Playlist @relation(fields: [playlistId], references: [id])
+  playlistId String
+
+  @@id([songId, playlistId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum SingerType {
+  SINGLE
+  BAND
+}
+
+enum SongType {
+  CLASSICAL
+  POP
+  ROCK
+  METAL
+  COUNTRY
+  HIP_HOP
+  BALLADS
+  DANCE
+  LOVE
+  GOSPEL
+}
