@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { Role } from '@prisma/client';
+import * as request from 'supertest';
 import * as process from 'process';
 import * as cookieParser from 'cookie-parser';
-import { Role } from '@prisma/client';
 
 interface UserData {
   userId: string;
@@ -132,6 +132,38 @@ describe('AppController (e2e)', () => {
   it('/auth/logout (DELETE)', async (): Promise<void> => {
     await request(app.getHttpServer())
       .delete(`/auth/logout`)
+      .set('cookie', userData.accessToken)
+      .expect(204);
+  });
+
+  it('/users (GET)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .get(`/users`)
+      .query({
+        page: 0,
+        size: 1,
+      })
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/users/:id (GET)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .get(`/users/${userData.userId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/users/:id (PUT)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .put(`/users/${userData.userId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/users/:id (DELETE)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .delete(`/users/${userData.userId}`)
       .set('cookie', userData.accessToken)
       .expect(204);
   });

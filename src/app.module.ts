@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UploadModule } from './upload/upload.module';
 import { PassportModule } from '@nestjs/passport';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     PrismaModule,
     CommonModule,
     UploadModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

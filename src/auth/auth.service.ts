@@ -269,7 +269,6 @@ export class AuthService {
     response.clearCookie('accessToken');
     response.clearCookie('refreshToken');
     response.end();
-    await this.prisma.user.delete({ where: { id: user.id } });
   }
 
   async signProductKey(productKeyData: CreateProductKeyDto): Promise<string> {
