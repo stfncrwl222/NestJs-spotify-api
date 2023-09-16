@@ -28,8 +28,8 @@ model User {
 model Singer {
   id           String        @id @default(uuid())
   name         String
-  info         String
-  type         SingerType
+  info         String?
+  type         SingerType?
   photoName    String?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt

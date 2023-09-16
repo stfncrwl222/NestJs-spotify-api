@@ -19,6 +19,9 @@ interface SelectedUserDataType {
   photoName: boolean;
   confirmed: boolean;
   role: boolean;
+  singer: boolean;
+  createdAt: boolean;
+  updatedAt: boolean;
 }
 
 @Injectable()
@@ -36,6 +39,9 @@ export class UserService {
     photoName: true,
     confirmed: true,
     role: true,
+    singer: true,
+    createdAt: true,
+    updatedAt: true,
   };
 
   async getAll(page: number, size: number): Promise<UserResponse[]> {

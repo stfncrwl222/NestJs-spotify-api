@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client';
+import { Role, Singer } from '@prisma/client';
 
 export class UserResponse {
   id: string;
@@ -7,4 +7,7 @@ export class UserResponse {
   photoName: string;
   confirmed: boolean;
   role: Role;
+  singer: Singer;
+  createdAt: Date;
+  updatedAt: Date;
 }
