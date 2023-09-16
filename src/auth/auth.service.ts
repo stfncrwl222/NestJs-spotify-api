@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSignupDto } from './dto/create-signup-dto';
 import { UserResponse } from './dto/user-response';
-import { Role, User } from '@prisma/client';
+import { Role, Singer, User } from '@prisma/client';
 import { hash, verify } from 'argon2';
 import { CommonService } from '../common/common.service';
 import { Request, Response } from 'express';
@@ -22,6 +22,9 @@ interface SelectedUserDataType {
   photoName: boolean;
   confirmed: boolean;
   role: boolean;
+  singer: boolean;
+  createdAt: boolean;
+  updatedAt: boolean;
 }
 
 @Injectable()
@@ -42,6 +45,9 @@ export class AuthService {
     photoName: true,
     confirmed: true,
     role: true,
+    singer: true,
+    createdAt: true,
+    updatedAt: true,
   };
 
   async signup(
@@ -79,6 +85,14 @@ export class AuthService {
       select: this.selectedUserData,
     });
 
+    const createdSinger: Singer = await this.prisma.singer.create({
+      data: {
+        name: createdUser.username,
+        userId: createdUser.id,
+        photoName: createdUser.photoName,
+      },
+    });
+
     const accessToken: string = await this.commonService.signAccessToken(
       createdUser.id,
       createdUser.role,
@@ -104,8 +118,8 @@ export class AuthService {
         <h4>${link}</h4>
       `,
     });
-    response.send(createdUser);
-    return createdUser;
+    response.send({ ...createdUser, singer: createdSinger });
+    return { ...createdUser, singer: createdSinger };
   }
 
   async confirmEmail(token: string): Promise<string> {
@@ -151,6 +165,10 @@ export class AuthService {
   ): Promise<UserResponse> {
     const { email, password } = loginData;
     const user: User = await this.commonService.findUserByEmail(email);
+
+    if (!user.confirmed) {
+      throw new ForbiddenException('User is not confirmed!');
+    }
 
     const isValidPassword: boolean = await verify(user.password, password);
     if (!isValidPassword) {

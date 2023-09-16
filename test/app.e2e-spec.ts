@@ -8,6 +8,7 @@ import * as cookieParser from 'cookie-parser';
 
 interface UserData {
   userId: string;
+  singerId: string;
   username: string;
   email: string;
   accessToken: string;
@@ -17,6 +18,7 @@ interface UserData {
 
 export const userData: UserData = {
   userId: '',
+  singerId: '',
   username: '',
   email: '',
   accessToken: '',
@@ -65,6 +67,8 @@ describe('AppController (e2e)', () => {
     userData.userId = response.body.id;
     userData.username = response.body.username;
     userData.email = response.body.email;
+    userData.singerId = response.body.singer.id;
+
     setCookie(response);
   });
 
@@ -159,6 +163,38 @@ describe('AppController (e2e)', () => {
       .put(`/users/${userData.userId}`)
       .set('cookie', userData.accessToken)
       .expect(200);
+  });
+
+  it('/singers (GET)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .get(`/singers`)
+      .query({
+        page: 0,
+        size: 1,
+      })
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/singers/:singerId (GET)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .get(`/singers/${userData.singerId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/singers/:singerId (PUT)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .put(`/singers/${userData.singerId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/singers/:singerId (DELETE)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .delete(`/singers/${userData.singerId}`)
+      .set('cookie', userData.accessToken)
+      .expect(204);
   });
 
   it('/users/:id (DELETE)', async (): Promise<void> => {
