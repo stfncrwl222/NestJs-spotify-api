@@ -192,11 +192,13 @@ describe('AppController (e2e)', () => {
       .expect(200);
   });
 
-  it('/singers/:singerId (DELETE)', async (): Promise<void> => {
-    await request(app.getHttpServer())
-      .delete(`/singers/${userData.singerId}`)
+  it('/singers/:singerId/new-singer-album (POST)', async (): Promise<void> => {
+    const response: request.Response = await request(app.getHttpServer())
+      .post(`/singers/${userData.singerId}/new-singer-album`)
+      .send({ name: 'stefan butler album song' })
       .set('cookie', userData.accessToken)
-      .expect(204);
+      .expect(201);
+    userData.singerAlbumId = response.body.id;
   });
 
   it('/singer-albums (GET)', async (): Promise<void> => {
@@ -208,15 +210,6 @@ describe('AppController (e2e)', () => {
         size: 1,
       })
       .expect(200);
-  });
-
-  it('/singer-albums (POST)', async (): Promise<void> => {
-    const response: request.Response = await request(app.getHttpServer())
-      .post(`/singer-albums`)
-      .send({ name: 'stefan butler album song' })
-      .set('cookie', userData.accessToken)
-      .expect(201);
-    userData.singerAlbumId = response.body.id;
   });
 
   it('/singer-albums/:singerAlbumId (GET)', async (): Promise<void> => {
@@ -236,6 +229,13 @@ describe('AppController (e2e)', () => {
   it('/singer-albums/:singerAlbumId (DELETE)', async (): Promise<void> => {
     await request(app.getHttpServer())
       .delete(`/singer-albums/${userData.singerAlbumId}`)
+      .set('cookie', userData.accessToken)
+      .expect(204);
+  });
+
+  it('/singers/:singerId (DELETE)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .delete(`/singers/${userData.singerId}`)
       .set('cookie', userData.accessToken)
       .expect(204);
   });

@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SingerAlbumResponse } from './dto/singer-album-response';
-import { CreateSingerAlbumDto } from './dto/create-singer-album-dto';
 import { JwtPayload } from '../auth/decorator/user.decorator';
 import { UploadService } from '../upload/upload.service';
 import { Role } from '@prisma/client';
@@ -50,24 +49,6 @@ export class SingerAlbumService {
       throw new NotFoundException('Singer Album not found!');
     }
     return singerAlbum;
-  }
-
-  async create(
-    singerAlbumData: CreateSingerAlbumDto,
-    decodedUser: JwtPayload,
-    file: Express.Multer.File,
-  ): Promise<SingerAlbumResponse> {
-    if (file) {
-      this.uploadService.upload(file.originalname, file.buffer);
-    }
-    return await this.prisma.singerAlbum.create({
-      data: {
-        ...singerAlbumData,
-        userId: decodedUser.id,
-        photoName: file ? file.originalname : null,
-      },
-      select: this.selectedSingerAlbumData,
-    });
   }
 
   async update(

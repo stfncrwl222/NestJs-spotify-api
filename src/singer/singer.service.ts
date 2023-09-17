@@ -9,6 +9,8 @@ import { Role } from '@prisma/client';
 import { JwtPayload } from '../auth/decorator/user.decorator';
 import { UpdateSingerDto } from './dto/update-singer-dto';
 import { UploadService } from '../upload/upload.service';
+import { CreateSingerAlbumDto } from '../singer-album/dto/create-singer-album-dto';
+import { SingerAlbumResponse } from '../singer-album/dto/singer-album-response';
 
 interface SelectedSingerData {
   id: boolean;
@@ -18,6 +20,13 @@ interface SelectedSingerData {
   photoName: boolean;
   createdAt: boolean;
   updatedAt: boolean;
+}
+
+interface SelectedSingerAlbumData {
+  id: boolean;
+  name: boolean;
+  photoName: boolean;
+  userId: boolean;
 }
 
 @Injectable()
@@ -35,6 +44,13 @@ export class SingerService {
     photoName: true,
     createdAt: true,
     updatedAt: true,
+  };
+
+  private selectedSingerAlbumData: SelectedSingerAlbumData = {
+    id: true,
+    name: true,
+    photoName: true,
+    userId: true,
   };
 
   async getAll(page: number, size: number): Promise<SingerResponse[]> {
@@ -82,5 +98,25 @@ export class SingerService {
     }
     await this.getOne(singerId);
     await this.prisma.singer.delete({ where: { id: singerId } });
+  }
+
+  async createSingerAlbum(
+    singerAlbumData: CreateSingerAlbumDto,
+    singerId: string,
+    decodedUser: JwtPayload,
+    file: Express.Multer.File,
+  ): Promise<SingerAlbumResponse> {
+    if (file) {
+      this.uploadService.upload(file.originalname, file.buffer);
+    }
+    return await this.prisma.singerAlbum.create({
+      data: {
+        ...singerAlbumData,
+        userId: decodedUser.id,
+        singerId,
+        photoName: file ? file.originalname : null,
+      },
+      select: this.selectedSingerAlbumData,
+    });
   }
 }
