@@ -33,7 +33,7 @@ model Singer {
   photoName    String?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId       String        @unique
   singerAlbums SingerAlbum[]
 }
@@ -44,9 +44,9 @@ model SingerAlbum {
   photoName String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User?    @relation(fields: [userId], references: [id])
+  User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String?
-  Singer    Singer?  @relation(fields: [singerId], references: [id])
+  Singer    Singer?  @relation(fields: [singerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   singerId  String?
   songs     Song[]
 }
@@ -62,9 +62,9 @@ model Song {
   photoName     String?
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
-  User          User?              @relation(fields: [userId], references: [id])
+  User          User?              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId        String?
-  SingerAlbum   SingerAlbum?       @relation(fields: [singerAlbumId], references: [id])
+  SingerAlbum   SingerAlbum?       @relation(fields: [singerAlbumId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   singerAlbumId String?
   playlists     SongsOnPlaylists[]
 }
@@ -75,15 +75,15 @@ model Playlist {
   photoName String?
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
-  User      User?              @relation(fields: [userId], references: [id])
+  User      User?              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String?
   songs     SongsOnPlaylists[]
 }
 
 model SongsOnPlaylists {
-  Song       Song     @relation(fields: [songId], references: [id])
+  Song       Song     @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   songId     String
-  Playlist   Playlist @relation(fields: [playlistId], references: [id])
+  Playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   playlistId String
 
   @@id([songId, playlistId])

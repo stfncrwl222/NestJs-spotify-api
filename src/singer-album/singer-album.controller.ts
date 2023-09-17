@@ -6,7 +6,6 @@ import {
   HttpCode,
   Param,
   ParseIntPipe,
-  Post,
   Put,
   Query,
   UploadedFile,
@@ -19,7 +18,6 @@ import { Roles } from '../auth/decorator/roles.decorator';
 import { Role } from '@prisma/client';
 import { SingerAlbumResponse } from './dto/singer-album-response';
 import { AtGuard } from '../auth/guard/at.guard';
-import { CreateSingerAlbumDto } from './dto/create-singer-album-dto';
 import { JwtPayload, UserDecorator } from '../auth/decorator/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateSingerAlbumDto } from './dto/update-singer-album-dto';
@@ -44,17 +42,6 @@ export class SingerAlbumController {
     @Param('singerAlbumId') singerAlbumId: string,
   ): Promise<SingerAlbumResponse> {
     return this.singerAlbumService.getOne(singerAlbumId);
-  }
-
-  @Post()
-  @UseGuards(AtGuard)
-  @UseInterceptors(FileInterceptor('file'))
-  async create(
-    @Body() singerAlbumData: CreateSingerAlbumDto,
-    @UserDecorator() decodedUser: JwtPayload,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<SingerAlbumResponse> {
-    return this.singerAlbumService.create(singerAlbumData, decodedUser, file);
   }
 
   @Put(':singerAlbumId')
