@@ -9,6 +9,7 @@ import * as cookieParser from 'cookie-parser';
 interface UserData {
   userId: string;
   singerId: string;
+  singerAlbumId: string;
   username: string;
   email: string;
   accessToken: string;
@@ -19,6 +20,7 @@ interface UserData {
 export const userData: UserData = {
   userId: '',
   singerId: '',
+  singerAlbumId: '',
   username: '',
   email: '',
   accessToken: '',
@@ -193,6 +195,47 @@ describe('AppController (e2e)', () => {
   it('/singers/:singerId (DELETE)', async (): Promise<void> => {
     await request(app.getHttpServer())
       .delete(`/singers/${userData.singerId}`)
+      .set('cookie', userData.accessToken)
+      .expect(204);
+  });
+
+  it('/singer-albums (GET)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .get(`/singer-albums`)
+      .set('cookie', userData.accessToken)
+      .query({
+        page: 0,
+        size: 1,
+      })
+      .expect(200);
+  });
+
+  it('/singer-albums (POST)', async (): Promise<void> => {
+    const response: request.Response = await request(app.getHttpServer())
+      .post(`/singer-albums`)
+      .send({ name: 'stefan butler album song' })
+      .set('cookie', userData.accessToken)
+      .expect(201);
+    userData.singerAlbumId = response.body.id;
+  });
+
+  it('/singer-albums/:singerAlbumId (GET)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .get(`/singer-albums/${userData.singerAlbumId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/singer-albums/:singerAlbumId (PUT)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .put(`/singer-albums/${userData.singerAlbumId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/singer-albums/:singerAlbumId (DELETE)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .delete(`/singer-albums/${userData.singerAlbumId}`)
       .set('cookie', userData.accessToken)
       .expect(204);
   });

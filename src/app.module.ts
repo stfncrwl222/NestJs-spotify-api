@@ -11,6 +11,7 @@ import { PassportModule } from '@nestjs/passport';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { UserModule } from './user/user.module';
 import { SingerModule } from './singer/singer.module';
+import { SingerAlbumModule } from './singer-album/singer-album.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { SingerModule } from './singer/singer.module';
     UploadModule,
     UserModule,
     SingerModule,
+    SingerAlbumModule,
   ],
   controllers: [AppController],
   providers: [AppService],
