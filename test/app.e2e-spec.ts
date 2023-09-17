@@ -192,9 +192,9 @@ describe('AppController (e2e)', () => {
       .expect(200);
   });
 
-  it('/singer-albums/:singerId/new-singer-album (POST)', async (): Promise<void> => {
+  it('/singers/:singerId/new-singer-album (POST)', async (): Promise<void> => {
     const response: request.Response = await request(app.getHttpServer())
-      .post(`/singer-albums/${userData.singerId}/new-singer-album`)
+      .post(`/singers/${userData.singerId}/new-singer-album`)
       .send({ name: 'stefan butler album song' })
       .set('cookie', userData.accessToken)
       .expect(201);
