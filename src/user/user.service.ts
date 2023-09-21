@@ -11,18 +11,7 @@ import { Role, User } from '@prisma/client';
 import { hash } from 'argon2';
 import { JwtPayload } from 'src/auth/decorator/user.decorator';
 import { UploadService } from '../upload/upload.service';
-
-interface SelectedUserDataType {
-  id: boolean;
-  username: boolean;
-  email: boolean;
-  photoName: boolean;
-  confirmed: boolean;
-  role: boolean;
-  singer: boolean;
-  createdAt: boolean;
-  updatedAt: boolean;
-}
+import { SelectedUserDataType } from 'src/interfaces/user-interface';
 
 @Injectable()
 export class UserService {
@@ -69,7 +58,7 @@ export class UserService {
     file: Express.Multer.File,
     decodedUser: JwtPayload,
   ): Promise<UserResponse> {
-    if (decodedUser.id !== userId && decodedUser.role !== Role.ADMIN) {
+    if (decodedUser.id !== userId || decodedUser.role !== Role.ADMIN) {
       throw new UnauthorizedException('Unauthorized user!');
     }
 
@@ -95,7 +84,7 @@ export class UserService {
   }
 
   async delete(userId: string, decodedUser: JwtPayload): Promise<void> {
-    if (decodedUser.id !== userId && decodedUser.role !== Role.ADMIN) {
+    if (decodedUser.id !== userId || decodedUser.role !== Role.ADMIN) {
       throw new UnauthorizedException('Unauthorized user!');
     }
     await this.commonService.findUserById(userId);

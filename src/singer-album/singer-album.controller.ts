@@ -6,6 +6,7 @@ import {
   HttpCode,
   Param,
   ParseIntPipe,
+  Post,
   Put,
   Query,
   UploadedFile,
@@ -21,6 +22,8 @@ import { AtGuard } from '../auth/guard/at.guard';
 import { JwtPayload, UserDecorator } from '../auth/decorator/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateSingerAlbumDto } from './dto/update-singer-album-dto';
+import { CreateSongDto } from '../song/dto/create-song-dto';
+import { SongResponse } from '../song/dto/song-response-dto';
 
 @Controller('singer-albums')
 export class SingerAlbumController {
@@ -69,5 +72,22 @@ export class SingerAlbumController {
     @UserDecorator() decodedUser: JwtPayload,
   ): Promise<void> {
     return this.singerAlbumService.delete(singerAlbumId, decodedUser);
+  }
+
+  @Post(':singerAlbumId/new-song')
+  @UseGuards(AtGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async createSong(
+    @Body() songData: CreateSongDto,
+    @Param('singerAlbumId') singerAlbumId: string,
+    @UserDecorator() decodedUser: JwtPayload,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<SongResponse> {
+    return this.singerAlbumService.createSong(
+      songData,
+      singerAlbumId,
+      decodedUser,
+      file,
+    );
   }
 }

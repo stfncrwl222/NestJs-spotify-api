@@ -12,6 +12,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { UserModule } from './user/user.module';
 import { SingerModule } from './singer/singer.module';
 import { SingerAlbumModule } from './singer-album/singer-album.module';
+import { SongModule } from './song/song.module';
+import { PlaylistModule } from './playlist/playlist.module';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { SingerAlbumModule } from './singer-album/singer-album.module';
     UserModule,
     SingerModule,
     SingerAlbumModule,
+    SongModule,
+    PlaylistModule,
   ],
   controllers: [AppController],
   providers: [AppService],
