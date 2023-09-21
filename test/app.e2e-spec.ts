@@ -10,6 +10,8 @@ interface UserData {
   userId: string;
   singerId: string;
   singerAlbumId: string;
+  songId: string;
+  playlistId: string;
   username: string;
   email: string;
   accessToken: string;
@@ -21,6 +23,8 @@ export const userData: UserData = {
   userId: '',
   singerId: '',
   singerAlbumId: '',
+  songId: '',
+  playlistId: '',
   username: '',
   email: '',
   accessToken: '',
@@ -226,16 +230,108 @@ describe('AppController (e2e)', () => {
       .expect(200);
   });
 
-  it('/singer-albums/:singerAlbumId (DELETE)', async (): Promise<void> => {
+  it('/singer-albums/:singerAlbumId/new-song (POST)', async (): Promise<void> => {
+    const response: request.Response = await request(app.getHttpServer())
+      .post(`/singer-albums/${userData.singerAlbumId}/new-song`)
+      .send({
+        name: 'stefan butler song',
+        description: 'stefan butler description',
+        artist: 'stefan butler',
+        type: 'POP',
+        language: 'english',
+        rate: 15,
+      })
+      .set('cookie', userData.accessToken)
+      .expect(201);
+
+    userData.songId = response.body.id;
+  });
+
+  it('/songs (GET)', async (): Promise<void> => {
     await request(app.getHttpServer())
-      .delete(`/singer-albums/${userData.singerAlbumId}`)
+      .get(`/songs`)
+      .set('cookie', userData.accessToken)
+      .query({
+        page: 0,
+        size: 1,
+      })
+      .expect(200);
+  });
+
+  it('/songs/:songId (GET)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .get(`/songs/${userData.songId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/songs/:songId (PUT)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .put(`/songs/${userData.songId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/playlists (POST)', async (): Promise<void> => {
+    const response: request.Response = await request(app.getHttpServer())
+      .post(`/playlists`)
+      .send({
+        name: 'stefan butler playlist',
+      })
+      .set('cookie', userData.accessToken)
+      .expect(201);
+    userData.playlistId = response.body.id;
+  });
+
+  it('/playlists (GET)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .get(`/playlists`)
+      .query({
+        page: 0,
+        size: 1,
+      })
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/playlists/:playlistId (GET)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .get(`/playlists/${userData.playlistId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/playlists/:playlistId (PUT)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .put(`/playlists/${userData.playlistId}`)
+      .set('cookie', userData.accessToken)
+      .expect(200);
+  });
+
+  it('/songs/:songId/playlists/:playlistId (POST)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .post(`/songs/${userData.songId}/playlists/${userData.playlistId}`)
+      .set('cookie', userData.accessToken)
+      .expect(201);
+  });
+
+  it('/playlists/:playlistId (DELETE)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .delete(`/playlists/${userData.playlistId}`)
       .set('cookie', userData.accessToken)
       .expect(204);
   });
 
-  it('/singers/:singerId (DELETE)', async (): Promise<void> => {
+  it('/songs/:songId (DELETE)', async (): Promise<void> => {
     await request(app.getHttpServer())
-      .delete(`/singers/${userData.singerId}`)
+      .delete(`/songs/${userData.songId}`)
+      .set('cookie', userData.accessToken)
+      .expect(204);
+  });
+
+  it('/singer-albums/:singerAlbumId (DELETE)', async (): Promise<void> => {
+    await request(app.getHttpServer())
+      .delete(`/singer-albums/${userData.singerAlbumId}`)
       .set('cookie', userData.accessToken)
       .expect(204);
   });

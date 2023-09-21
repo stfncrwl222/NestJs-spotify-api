@@ -14,18 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './decorator/user.decorator';
 import { CreateLoginDto } from './dto/create-login-dto';
 import { ResetPasswordDto } from './dto/reset-password-dto';
-
-interface SelectedUserDataType {
-  id: boolean;
-  username: boolean;
-  email: boolean;
-  photoName: boolean;
-  confirmed: boolean;
-  role: boolean;
-  singer: boolean;
-  createdAt: boolean;
-  updatedAt: boolean;
-}
+import { SelectedUserDataType } from 'src/interfaces/user-interface';
 
 @Injectable()
 export class AuthService {

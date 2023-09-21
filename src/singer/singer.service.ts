@@ -11,23 +11,8 @@ import { UpdateSingerDto } from './dto/update-singer-dto';
 import { UploadService } from '../upload/upload.service';
 import { CreateSingerAlbumDto } from '../singer-album/dto/create-singer-album-dto';
 import { SingerAlbumResponse } from '../singer-album/dto/singer-album-response';
-
-interface SelectedSingerData {
-  id: boolean;
-  name: boolean;
-  info: boolean;
-  type: boolean;
-  photoName: boolean;
-  createdAt: boolean;
-  updatedAt: boolean;
-}
-
-interface SelectedSingerAlbumData {
-  id: boolean;
-  name: boolean;
-  photoName: boolean;
-  userId: boolean;
-}
+import { SelectedSingerData } from 'src/interfaces/singer-interface';
+import { SelectedSingerAlbumData } from 'src/interfaces/singer-album-interface';
 
 @Injectable()
 export class SingerService {
@@ -41,6 +26,7 @@ export class SingerService {
     name: true,
     info: true,
     type: true,
+    userId: true,
     photoName: true,
     createdAt: true,
     updatedAt: true,
@@ -78,7 +64,8 @@ export class SingerService {
     file: Express.Multer.File,
     decodedUser: JwtPayload,
   ): Promise<SingerResponse> {
-    if (decodedUser.id !== singerId && decodedUser.role !== Role.ADMIN) {
+    const singer: SingerResponse = await this.getOne(singerId);
+    if (decodedUser.id !== singer.userId || decodedUser.role !== Role.ADMIN) {
       throw new UnauthorizedException('Unauthorized user!');
     }
     if (file) {
@@ -93,7 +80,8 @@ export class SingerService {
   }
 
   async delete(singerId: string, decodedUser: JwtPayload): Promise<void> {
-    if (decodedUser.id !== singerId && decodedUser.role !== Role.ADMIN) {
+    const singer: SingerResponse = await this.getOne(singerId);
+    if (decodedUser.id !== singer.userId || decodedUser.role !== Role.ADMIN) {
       throw new UnauthorizedException('Unauthorized user!');
     }
     await this.getOne(singerId);

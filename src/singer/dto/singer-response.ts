@@ -6,6 +6,7 @@ export class SingerResponse {
   info: string;
   type: SingerType;
   photoName: string;
+  userId: string;
   createdAt: Date;
   updatedAt: Date;
 }
